@@ -1,0 +1,21 @@
+#pragma once
+#include <cstddef>
+#include <string>
+#include <format>
+
+class LazySequenceException : public std::exception {
+private:
+    std::string message_;
+public:
+    explicit LazySequenceException(const std::string& message) : message_(message) {}
+    
+    const char* what() const noexcept override {
+        return message_.c_str();
+    }
+};
+
+class LazySequenceOutOfRange : public LazySequenceException {
+public:
+    LazySequenceOutOfRange(size_t index) 
+        : LazySequenceException(std::format("index {} is out of range in LazySequence", index)) {};
+};
