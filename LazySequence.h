@@ -5,6 +5,7 @@
 #include <initializer_list>
 #include "Generator.h"
 #include "Exception/LazySequenceException.h"
+#include "Cardinal.h"
 
 
 
@@ -12,7 +13,7 @@ template <template <typename> class Container, typename T>
 class LazySequence {
 private:
     Container<T> cache_;
-    std::shared_ptr<Generator<T>> generator_;
+    std::shared_ptr<Generator<Container, T>> generator_;
     
 public:
 
