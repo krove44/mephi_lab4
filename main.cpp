@@ -1,4 +1,3 @@
-#include <cstdlib>
 #include <iostream>
 #include "LazySequence.h"
 #include "mephi_lab2/Sequence/ListSequence.h"

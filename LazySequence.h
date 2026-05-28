@@ -2,7 +2,6 @@
 #include "mephi_lab2/Sequence/Sequence.h"
 #include "mephi_lab2/Sequence/ListSequence.h"
 #include <cstddef>
-#include <functional>
 #include <initializer_list>
 #include "Generator.h"
 #include "Exception/LazySequenceException.h"
