@@ -4,6 +4,7 @@
 #include <cmath>
 #include <cstddef>
 #include <initializer_list>
+#include <memory>
 #include "Generator.h"
 #include "Exception/LazySequenceException.h"
 #include "Cardinal.h"
@@ -15,6 +16,7 @@ class LazySequence {
 private:
     Container<T> cache_;
     Container<T> suffix_;
+    size_t generator_offset_ = 0;
     std::shared_ptr<Generator<Container, T>> generator_;
 
     size_t FiniteSize() const {
@@ -57,8 +59,8 @@ public:
             return cache_[index];
         }
         if (generator_) {
-            index -= cache_.GetLenght();
-            return generator_->Materialize(index);
+            size_t generatorIndex = index - cache_.GetLenght() + generator_offset_;
+            return generator_->Materialize(generatorIndex);
         }
         throw LazySequenceOutOfRange(index);
     }
@@ -98,9 +100,25 @@ public:
         return result;
     };
 
-    LazySequence<Container, T>* InsertAt(T item, size_t index) {return this;};
+    LazySequence<Container, T> InsertAt(T item, size_t index) {
+        if (!IsInfinite() && index > FiniteSize()) {
+            throw LazySequenceOutOfRange(index);
+        }
+        LazySequence<Container, T> result(*this);
+        if (!IsInfinite()) {
+            result.cache_.InsertAt(item, index);
+            return result;
+        }
+        for(size_t i = result.cache_.GetLenght(); i < index; ++i){
+            result.cache_.Append(Get(i));
+        }
+        result.cache_.Append(item);
+        result.generator_offset_ = cache_.GetLenght();
+        return result;
+    };
     
-    LazySequence<Container, T>*  Concat(const ISequence<T>* list) {return this;};
+    // LazySequence<Container, T> Concat(const LazySequence<Container, T>& other) {
+    // };
 
     bool IsInfinite() const {
         return generator_ && !generator_->IsFinite();

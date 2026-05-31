@@ -12,8 +12,8 @@ int main() {
     //     size_t size = cache.GetLenght();
     //     return cache[size-2] + cache[size - 1];}, ListSequence<int>({0, 1})));
     LazySequence<ListSequence, int> sp = {1 ,2 ,3 ,4};
-    auto sp1 = sp.Prepend(110);    
-    std::cout << sp1.GetFirst() << std::endl;
+    auto sp1 = sp.InsertAt(110, 1);    
+    std::cout << sp1.Get(1) << std::endl;
     } catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
     } catch (...) {
