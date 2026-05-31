@@ -92,7 +92,11 @@ public:
         return result;
     };
 
-    LazySequence<Container, T>* Prepend(T item) {return this;};
+    LazySequence<Container, T> Prepend(T item) {
+        LazySequence<Container, T> result(*this);
+        result.cache_.Prepend(item);
+        return result;
+    };
 
     LazySequence<Container, T>* InsertAt(T item, size_t index) {return this;};
     
