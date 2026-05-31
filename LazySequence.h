@@ -67,7 +67,16 @@ public:
         return Cardinal(FiniteSize());
     }
 
-    LazySequence<Container, T>* GetSubsequence(size_t startIndex, size_t endIndex) const {return &LazySequence();};
+    LazySequence<Container, T> GetSubsequence(size_t startIndex, size_t endIndex) const {
+        if(startIndex > endIndex) {
+            throw LazySequenceGetSubsequence(startIndex, endIndex);
+        }
+        Container<T> items;
+        for (size_t i = startIndex; i <= endIndex; ++i) {
+            items.Append(Get(i));
+        }
+        return LazySequence<Container, T>(items);
+    };
 
     LazySequence<Container, T>* Append(T item) {return this;};
 

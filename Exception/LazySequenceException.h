@@ -31,3 +31,9 @@ public:
     LazySequenceIsEmpthy() 
         : LazySequenceException(std::format("LazySequence is empthy")) {};
 };
+
+class LazySequenceGetSubsequence : public LazySequenceException {
+public:
+    LazySequenceGetSubsequence(size_t index1, size_t index2) 
+        : LazySequenceException(std::format("index {} < index {}", index1, index2)) {};
+};
