@@ -1,6 +1,7 @@
 #pragma once
 #include "mephi_lab2/Sequence/Sequence.h"
 #include "mephi_lab2/Sequence/ListSequence.h"
+#include <cmath>
 #include <cstddef>
 #include <initializer_list>
 #include "Generator.h"
@@ -14,33 +15,55 @@ class LazySequence {
 private:
     Container<T> cache_;
     std::shared_ptr<Generator<Container, T>> generator_;
+
+    size_t FiniteSize() const {
+        size_t size = cache_.GetLenght();
+        if (generator_ && generator_->IsFinite()) {
+            size += generator_->FiniteSize();
+        }
+        return size;
+    }
     
 public:
 
-    LazySequence() : generator_(nullptr){};
+    LazySequence() : generator_(nullptr), cache_{}{};
 
     LazySequence(const Container<T>& data) : generator_(nullptr), cache_(data){};
 
     LazySequence(std::initializer_list<T> data) : generator_(nullptr), cache_(data){};
+    
+    LazySequence(std::shared_ptr<Generator<Container, T>> generator, std::initializer_list<T> data) : generator_(generator), cache_(data) {}
 
     T GetFirst() const {
-        return cache_[0];
+        return Get(0);
     };
 
     T GetLast() const {
-        //пупупу
+        if(IsInfinite()) {
+            throw LazySequenceIsInfinite();
+        }
+        size_t len = FiniteSize();
+        if (len == 0) {
+            throw LazySequenceIsEmpthy();
+        };
+        return Get(len - 1);
     };
 
     T Get(size_t index) const {
         if (index < cache_.GetLenght()){
             return cache_[index];
         }
+        if (index < FiniteSize()){
+            return generator_->Materialize(index);
+        }
         throw LazySequenceOutOfRange(index);
     }
 
-    size_t GetLenght() const {
-        //потом реализую для бесконечных
-        return cache_.GetLenght();
+    Cardinal GetLenght() const {
+        if (IsInfinite()){
+            return Cardinal(true);
+        }
+        return Cardinal(FiniteSize());
     }
 
     LazySequence<Container, T>* GetSubsequence(size_t startIndex, size_t endIndex) const {return &LazySequence();};
@@ -53,4 +76,7 @@ public:
     
     LazySequence<Container, T>*  Concat(const ISequence<T>* list) {return this;};
 
+    bool IsInfinite() const {
+        return generator_ && !generator_->IsFinite();
+    }
 };
