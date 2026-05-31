@@ -8,13 +8,12 @@
 
 int main() {
     try{
-    LazySequence<ListSequence, int> sp(std::make_shared<Generator<ListSequence, int>>([](const ListSequence<int>& cache){
-        size_t size = cache.GetLenght();
-        return cache[size-2] + cache[size - 1];}, ListSequence<int>({0, 1})));
-    auto sp1 = sp.GetSubsequence(0, 15);    
-    for(size_t i = 0; i < 10; ++i){
-        std::cout << sp1.Get(i) << std::endl;
-    }
+    // LazySequence<ListSequence, int> sp(std::make_shared<Generator<ListSequence, int>>([](const ListSequence<int>& cache){
+    //     size_t size = cache.GetLenght();
+    //     return cache[size-2] + cache[size - 1];}, ListSequence<int>({0, 1})));
+    LazySequence<ListSequence, int> sp = {1 ,2 ,3 ,4};
+    auto sp1 = sp.Append(110);    
+    std::cout << sp1.GetLast() << std::endl;
     } catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
     } catch (...) {

@@ -14,6 +14,7 @@ template <template <typename> class Container, typename T>
 class LazySequence {
 private:
     Container<T> cache_;
+    Container<T> suffix_;
     std::shared_ptr<Generator<Container, T>> generator_;
 
     size_t FiniteSize() const {
@@ -29,6 +30,8 @@ public:
     LazySequence() : generator_(nullptr), cache_{}{};
 
     LazySequence(const Container<T>& data) : generator_(nullptr), cache_(data){};
+
+    LazySequence(const LazySequence<Container, T>& other) : cache_(other.cache_), suffix_(other.suffix_), generator_(other.generator_){};
 
     LazySequence(std::initializer_list<T> data) : generator_(nullptr), cache_(data){};
     
@@ -78,7 +81,16 @@ public:
         return LazySequence<Container, T>(items);
     };
 
-    LazySequence<Container, T>* Append(T item) {return this;};
+    LazySequence<Container, T> Append(T item) {
+        LazySequence<Container, T> result(*this);
+        if (IsInfinite()) {
+            result.suffix_.Append(item);
+        } 
+        else {
+            result.cache_.Append(item);
+        }
+        return result;
+    };
 
     LazySequence<Container, T>* Prepend(T item) {return this;};
 
