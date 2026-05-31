@@ -32,7 +32,7 @@ public:
 
     LazySequence(std::initializer_list<T> data) : generator_(nullptr), cache_(data){};
     
-    LazySequence(std::shared_ptr<Generator<Container, T>> generator, std::initializer_list<T> data) : generator_(generator), cache_(data) {}
+    LazySequence(std::shared_ptr<Generator<Container, T>> generator) : generator_(generator), cache_{}{}
 
     T GetFirst() const {
         return Get(0);
@@ -53,7 +53,8 @@ public:
         if (index < cache_.GetLenght()){
             return cache_[index];
         }
-        if (index < FiniteSize()){
+        if (generator_) {
+            index -= cache_.GetLenght();
             return generator_->Materialize(index);
         }
         throw LazySequenceOutOfRange(index);
