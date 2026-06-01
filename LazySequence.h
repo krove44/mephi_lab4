@@ -5,7 +5,8 @@
 #include <cstddef>
 #include <initializer_list>
 #include <memory>
-#include "Generator.h"
+#include "Generators\RecurentGenerator.h"
+#include "Generators\IGenerator.h"
 #include "Exception/LazySequenceException.h"
 #include "Cardinal.h"
 
@@ -17,7 +18,7 @@ private:
     Container<T> cache_;
     Container<T> suffix_;
     size_t generator_offset_ = 0;
-    std::shared_ptr<Generator<Container, T>> generator_;
+    std::shared_ptr<IGenerator<Container, T>> generator_;
 
     size_t FiniteSize() const {
         size_t size = cache_.GetLenght();
@@ -37,7 +38,7 @@ public:
 
     LazySequence(std::initializer_list<T> data) : generator_(nullptr), cache_(data){};
     
-    LazySequence(std::shared_ptr<Generator<Container, T>> generator) : generator_(generator), cache_{}{}
+    LazySequence(std::shared_ptr<IGenerator<Container, T>> generator) : generator_(generator), cache_{}{}
 
     T GetFirst() const {
         return Get(0);
@@ -59,15 +60,15 @@ public:
             return cache_[index];
         }
         if (generator_) {
-            size_t generatorIndex = index - cache_.GetLenght() + generator_offset_;
-            return generator_->Materialize(generatorIndex);
+            size_t gen_ = index - cache_.GetLenght() + generator_offset_;
+            return generator_->Get(Cardinal(gen_));
         }
         throw LazySequenceOutOfRange(index);
     }
 
     Cardinal GetLenght() const {
-        if (IsInfinite()){
-            return Cardinal(true);
+        if (IsInfinite()) {
+            return Cardinal::Omega();
         }
         return Cardinal(FiniteSize());
     }
@@ -121,6 +122,16 @@ public:
     // };
 
     bool IsInfinite() const {
-        return generator_ && !generator_->IsFinite();
+        return generator_ && generator_->Size().IsInfinite();
+    }
+
+    T GetByCardinal(Cardinal index) const {
+        if (index.IsFinite()) {
+            return Get(index.Value());
+        }
+        if (generator_) {
+            return generator_->Get(index);
+        }
+        throw LazySequenceException("bad index");
     }
 };
