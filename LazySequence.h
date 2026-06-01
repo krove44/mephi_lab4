@@ -1,7 +1,4 @@
 #pragma once
-#include "mephi_lab2/Sequence/Sequence.h"
-#include "mephi_lab2/Sequence/ListSequence.h"
-#include <cmath>
 #include <cstddef>
 #include <initializer_list>
 #include <memory>
@@ -9,7 +6,6 @@
 #include "Generators\IGenerator.h"
 #include "Exception/LazySequenceException.h"
 #include "Cardinal.h"
-
 
 
 template <template <typename> class Container, typename T>
@@ -22,8 +18,11 @@ private:
 
     size_t FiniteSize() const {
         size_t size = cache_.GetLenght();
-        if (generator_ && generator_->IsFinite()) {
-            size += generator_->FiniteSize();
+        if (generator_) {
+            Cardinal gen_size = generator_->Size();
+            if (gen_size.IsFinite()) {
+                size += gen_size.Value();
+            }
         }
         return size;
     }
@@ -41,7 +40,7 @@ public:
     LazySequence(std::shared_ptr<IGenerator<Container, T>> generator) : generator_(generator), cache_{}{}
 
     T GetFirst() const {
-        return Get(0);
+        return Get((size_t)0);
     };
 
     T GetLast() const {
@@ -118,8 +117,7 @@ public:
         return result;
     };
     
-    // LazySequence<Container, T> Concat(const LazySequence<Container, T>& other) {
-    // };
+    LazySequence<Container, T> Concat(const LazySequence<Container, T>& other) const;
 
     bool IsInfinite() const {
         return generator_ && generator_->Size().IsInfinite();
@@ -135,3 +133,15 @@ public:
         throw LazySequenceException("bad index");
     }
 };
+
+#include "Generators\ConcatGenerator.h"
+#include "Generators\Sequencegenerator.h"
+
+
+template <template <typename> class Container, typename T>
+LazySequence<Container, T> LazySequence<Container, T>::Concat(const LazySequence<Container, T>& other) const {
+    auto gen_self  = std::make_shared<SequenceGenerator<Container, T>>(*this);
+    auto gen_other = std::make_shared<SequenceGenerator<Container, T>>(other);
+    auto gen_concat = std::make_shared<ConcatGenerator<Container, T>>(gen_self, gen_other);
+    return LazySequence<Container, T>(std::static_pointer_cast<IGenerator<Container, T>>(gen_concat));
+}
