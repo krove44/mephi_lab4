@@ -21,7 +21,6 @@ public:
 
     Cardinal(size_t value) : type_(Type::Finite), value_(value) {}
 
-    Cardinal(bool is_infinite) : type_(is_infinite ? Type::Infinite : Type::Finite), value_(0) {}
     
     static Cardinal Omega() {
         return Cardinal(Type::Infinite, 0);

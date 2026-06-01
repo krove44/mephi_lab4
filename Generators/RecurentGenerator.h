@@ -37,7 +37,7 @@ public:
         }
         return true;
     }
-
+    //TODO:: использовать optional
     T GetNext() override {
         if (!HasNext()) {
             throw RecurentGeneratorException("HasNext is false");
