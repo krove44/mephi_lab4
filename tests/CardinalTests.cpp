@@ -80,3 +80,45 @@ TEST(Cardinal, InfiniteNotLessThanInfinite) {
     EXPECT_FALSE(Cardinal::Omega() < Cardinal::Omega());
 }
 
+TEST(Cardinal, InfiniteLessThanTransfinite) {
+    EXPECT_TRUE(Cardinal::Omega() < Cardinal::OmegaPlus(1));
+}
+
+TEST(Cardinal, TransfiniteNotLessThanInfinite) {
+    EXPECT_FALSE(Cardinal::OmegaPlus(1) < Cardinal::Omega());
+}
+
+TEST(Cardinal, EqualityFinite) {
+    EXPECT_EQ(Cardinal(5), Cardinal(5));
+    EXPECT_NE(Cardinal(5), Cardinal(6));
+}
+
+TEST(Cardinal, EqualityInfinite) {
+    EXPECT_EQ(Cardinal::Omega(), Cardinal::Omega());
+    EXPECT_NE(Cardinal::Omega(), Cardinal(0));
+}
+
+TEST(Cardinal, LessOrEqualFinite) {
+    EXPECT_TRUE(Cardinal(3) <= Cardinal(3));
+    EXPECT_TRUE(Cardinal(2) <= Cardinal(3));
+    EXPECT_FALSE(Cardinal(4) <= Cardinal(3));
+}
+
+TEST(Cardinal, GreaterFinite) {
+    EXPECT_TRUE(Cardinal(5) > Cardinal(4));
+    EXPECT_FALSE(Cardinal(4) > Cardinal(5));
+}
+
+TEST(Cardinal, GreaterOrEqualFinite) {
+    EXPECT_TRUE(Cardinal(5) >= Cardinal(5));
+    EXPECT_TRUE(Cardinal(6) >= Cardinal(5));
+    EXPECT_FALSE(Cardinal(4) >= Cardinal(5));
+}
+
+TEST(Cardinal, ValueThrowsOnInfinite) {
+    EXPECT_THROW(Cardinal::Omega().Value(), CardinalException);
+}
+
+TEST(Cardinal, FinitePartThrowsOnTransfinite) {
+    EXPECT_THROW(Cardinal::OmegaPlus(3).FinitePart(), CardinalException);
+}
