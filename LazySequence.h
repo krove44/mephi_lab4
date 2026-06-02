@@ -2,7 +2,6 @@
 #include <cstddef>
 #include <initializer_list>
 #include <memory>
-#include "Generators\RecurentGenerator.h"
 #include "Generators\IGenerator.h"
 #include "Exception/LazySequenceException.h"
 #include "Cardinal.h"
