@@ -133,3 +133,105 @@ TEST(RecurentGeneratorArray, FiniteSliceHasCorrectSize) {
     EXPECT_EQ(sliced->Size().Value(), size_t(5));
 }
 
+TEST(RecurentGeneratorList, InfiniteSizeIsOmega) {
+    ListSequence<int> seed = {0, 1};
+    RecurentGenerator<ListSequence, int> gen(FibRule<ListSequence>(), seed);
+    EXPECT_TRUE(gen.Size().IsInfinite());
+}
+
+TEST(RecurentGeneratorList, FiniteSizeCorrect) {
+    ListSequence<int> seed = {0, 1};
+    RecurentGenerator<ListSequence, int> gen(FibRule<ListSequence>(), seed, 10);
+    EXPECT_EQ(gen.Size().Value(), size_t(10));
+}
+
+TEST(RecurentGeneratorList, HasNextInfiniteAlwaysTrue) {
+    ListSequence<int> seed = {0, 1};
+    RecurentGenerator<ListSequence, int> gen(FibRule<ListSequence>(), seed);
+    EXPECT_TRUE(gen.HasNext());
+}
+
+TEST(RecurentGeneratorList, HasNextFiniteExhausts) {
+    ListSequence<int> seed = {0, 1};
+    RecurentGenerator<ListSequence, int> gen(FibRule<ListSequence>(), seed, 2);
+    gen.GetNext();
+    gen.GetNext();
+    EXPECT_FALSE(gen.HasNext());
+}
+
+TEST(RecurentGeneratorList, GetNextReturnsFibonacci) {
+    ListSequence<int> seed = {0, 1};
+    RecurentGenerator<ListSequence, int> gen(FibRule<ListSequence>(), seed);
+    EXPECT_EQ(gen.GetNext(), 0);
+    EXPECT_EQ(gen.GetNext(), 1);
+    EXPECT_EQ(gen.GetNext(), 1);
+    EXPECT_EQ(gen.GetNext(), 2);
+    EXPECT_EQ(gen.GetNext(), 3);
+    EXPECT_EQ(gen.GetNext(), 5);
+}
+
+TEST(RecurentGeneratorList, GetByIndexNonSequential) {
+    ListSequence<int> seed = {0, 1};
+    RecurentGenerator<ListSequence, int> gen(FibRule<ListSequence>(), seed);
+    EXPECT_EQ(gen.Get(Cardinal(6u)), 8);
+    EXPECT_EQ(gen.Get(Cardinal(0u)), 0);
+    EXPECT_EQ(gen.Get(Cardinal(9u)), 34);
+}
+
+TEST(RecurentGeneratorList, CurrentAfterGetNext) {
+    ListSequence<int> seed = {0, 1};
+    RecurentGenerator<ListSequence, int> gen(FibRule<ListSequence>(), seed);
+    gen.GetNext();
+    gen.GetNext();
+    EXPECT_EQ(gen.Current(), 1);
+}
+
+TEST(RecurentGeneratorList, CurrentBeforeGetNextThrows) {
+    ListSequence<int> seed = {0, 1};
+    RecurentGenerator<ListSequence, int> gen(FibRule<ListSequence>(), seed);
+    EXPECT_THROW(gen.Current(), RecurentGeneratorException);
+}
+
+TEST(RecurentGeneratorList, GetWithInfiniteIndexThrows) {
+    ListSequence<int> seed = {0, 1};
+    RecurentGenerator<ListSequence, int> gen(FibRule<ListSequence>(), seed);
+    EXPECT_THROW(gen.Get(Cardinal::Omega()), RecurentGeneratorException);
+}
+
+TEST(RecurentGeneratorList, FiniteGetNextBeyondSizeThrows) {
+    ListSequence<int> seed = {0, 1};
+    RecurentGenerator<ListSequence, int> gen(FibRule<ListSequence>(), seed, 2);
+    gen.GetNext();
+    gen.GetNext();
+    EXPECT_THROW(gen.GetNext(), RecurentGeneratorException);
+}
+
+TEST(RecurentGeneratorList, SlicePreservesValues) {
+    ListSequence<int> seed = {0, 1};
+    RecurentGenerator<ListSequence, int> gen(FibRule<ListSequence>(), seed);
+    auto sliced = gen.Slice(Cardinal(2u));
+    EXPECT_EQ(sliced->Get(Cardinal(0u)), 1);
+    EXPECT_EQ(sliced->Get(Cardinal(1u)), 2);
+}
+
+TEST(RecurentGeneratorList, SliceWithInfiniteOffsetThrows) {
+    ListSequence<int> seed = {0, 1};
+    RecurentGenerator<ListSequence, int> gen(FibRule<ListSequence>(), seed);
+    EXPECT_THROW(gen.Slice(Cardinal::Omega()), RecurentGeneratorException);
+}
+
+TEST(RecurentGeneratorList, ArithmeticProgressionGetNext) {
+    ListSequence<int> seed = {0};
+    RecurentGenerator<ListSequence, int> gen(ArithmeticRule<ListSequence>(3), seed);
+    EXPECT_EQ(gen.GetNext(), 0);
+    EXPECT_EQ(gen.GetNext(), 3);
+    EXPECT_EQ(gen.GetNext(), 6);
+    EXPECT_EQ(gen.GetNext(), 9);
+}
+
+TEST(RecurentGeneratorList, FiniteSliceHasCorrectSize) {
+    ListSequence<int> seed = {0, 1};
+    RecurentGenerator<ListSequence, int> gen(FibRule<ListSequence>(), seed, 8);
+    auto sliced = gen.Slice(Cardinal(3u));
+    EXPECT_EQ(sliced->Size().Value(), size_t(5));
+}
