@@ -92,3 +92,53 @@ TEST(LazySequenceArray, InsertAtMiddle) {
     EXPECT_EQ(seq2.GetLenght().Value(), size_t(3));
 }
 
+TEST(LazySequenceArray, InsertAtOutOfRangeThrows) {
+    LazySequence<ArraySequence, int> seq(ArraySequence<int>{1, 2});
+    EXPECT_THROW(seq.InsertAt(99, 10), LazySequenceOutOfRange);
+}
+
+TEST(LazySequenceArray, GetSubsequence) {
+    LazySequence<ArraySequence, int> seq(ArraySequence<int>{10, 20, 30, 40, 50});
+    auto sub = seq.GetSubsequence(1, 3);
+    EXPECT_EQ(sub.GetLenght().Value(), size_t(3));
+    EXPECT_EQ(sub.Get(0), 20);
+    EXPECT_EQ(sub.Get(2), 40);
+}
+
+TEST(LazySequenceArray, GetSubsequenceInvalidRangeThrows) {
+    LazySequence<ArraySequence, int> seq(ArraySequence<int>{1, 2, 3});
+    EXPECT_THROW(seq.GetSubsequence(3, 1), LazySequenceGetSubsequence);
+}
+
+TEST(LazySequenceArray, GetSubsequenceSingleElement) {
+    LazySequence<ArraySequence, int> seq(ArraySequence<int>{10, 20, 30});
+    auto sub = seq.GetSubsequence(1, 1);
+    EXPECT_EQ(sub.GetLenght().Value(), size_t(1));
+    EXPECT_EQ(sub.Get(0), 20);
+}
+
+TEST(LazySequenceArray, CopyConstructorIsIndependent) {
+    LazySequence<ArraySequence, int> seq(ArraySequence<int>{1, 2, 3});
+    LazySequence<ArraySequence, int> copy(seq);
+    auto new_copy = copy.Append(4);
+    EXPECT_EQ(seq.GetLenght().Value(), size_t(3));
+    EXPECT_EQ(new_copy.GetLenght().Value(), size_t(4));
+}
+
+TEST(LazySequenceArray, ConcatTwoFiniteSequences) {
+    LazySequence<ArraySequence, int> a(ArraySequence<int>{1, 2, 3});
+    LazySequence<ArraySequence, int> b(ArraySequence<int>{4, 5});
+    auto c = a.Concat(b);
+    EXPECT_EQ(c.GetLenght().Value(), size_t(5));
+    EXPECT_EQ(c.Get(0), 1);
+    EXPECT_EQ(c.Get(3), 4);
+    EXPECT_EQ(c.Get(4), 5);
+}
+
+TEST(LazySequenceArray, ConcatWithEmptyRight) {
+    LazySequence<ArraySequence, int> a(ArraySequence<int>{1, 2});
+    LazySequence<ArraySequence, int> empty;
+    auto c = a.Concat(empty);
+    EXPECT_EQ(c.GetLenght().Value(), size_t(2));
+    EXPECT_EQ(c.Get(1), 2);
+}
