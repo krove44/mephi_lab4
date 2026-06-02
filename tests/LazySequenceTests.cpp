@@ -142,3 +142,46 @@ TEST(LazySequenceArray, ConcatWithEmptyRight) {
     EXPECT_EQ(c.GetLenght().Value(), size_t(2));
     EXPECT_EQ(c.Get(1), 2);
 }
+
+TEST(LazySequenceArray, ConcatWithEmptyLeft) {
+    LazySequence<ArraySequence, int> empty;
+    LazySequence<ArraySequence, int> b(ArraySequence<int>{7, 8});
+    auto c = empty.Concat(b);
+    EXPECT_EQ(c.GetLenght().Value(), size_t(2));
+    EXPECT_EQ(c.Get(0), 7);
+}
+
+TEST(LazySequenceArray, ConcatPreservesOrder) {
+    LazySequence<ArraySequence, int> a(ArraySequence<int>{1, 2});
+    LazySequence<ArraySequence, int> b(ArraySequence<int>{3, 4});
+    auto c = a.Concat(b);
+    EXPECT_EQ(c.Get(0), 1);
+    EXPECT_EQ(c.Get(1), 2);
+    EXPECT_EQ(c.Get(2), 3);
+    EXPECT_EQ(c.Get(3), 4);
+}
+
+TEST(LazySequenceArray, InfiniteGeneratorMakesInfiniteSequence) {
+    auto seq = MakeFibSeq<ArraySequence>();
+    EXPECT_TRUE(seq.IsInfinite());
+    EXPECT_TRUE(seq.GetLenght().IsInfinite());
+}
+
+TEST(LazySequenceArray, InfiniteSequenceGetLastThrows) {
+    auto seq = MakeFibSeq<ArraySequence>();
+    EXPECT_THROW(seq.GetLast(), LazySequenceIsInfinite);
+}
+
+TEST(LazySequenceArray, InfiniteSequenceRandomAccess) {
+    auto seq = MakeFibSeq<ArraySequence>();
+    EXPECT_EQ(seq.Get(0), 0);
+    EXPECT_EQ(seq.Get(1), 1);
+    EXPECT_EQ(seq.Get(6), 8);
+    EXPECT_EQ(seq.Get(9), 34);
+}
+
+TEST(LazySequenceArray, GetByCardinalFinite) {
+    LazySequence<ArraySequence, int> seq(ArraySequence<int>{100, 200, 300});
+    EXPECT_EQ(seq.GetByCardinal(Cardinal(0u)), 100);
+    EXPECT_EQ(seq.GetByCardinal(Cardinal(2u)), 300);
+}
