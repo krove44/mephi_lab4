@@ -12,7 +12,8 @@ private:
     Container<T> rule_cache_;
     bool is_finite_;
     size_t finite_size_;
-    size_t cursor_;
+    size_t cursor_ = 0;
+    size_t offset_ = 0;
 
     void Materialize(size_t index) {
         if (is_finite_ && index >= finite_size_) {
@@ -57,7 +58,7 @@ public:
         if (index.IsInfinite()) {
             throw RecurentGeneratorException("transfinite index");
         }
-        size_t i = index.Value();
+        size_t i = index.Value() + offset_;
         Materialize(i);
         return rule_cache_[i];
     }
@@ -85,6 +86,7 @@ public:
             sliced = std::make_shared<RecurentGenerator<Container, T>>(rule_, rule_cache_);
         }
         sliced->cursor_ = off;
+        sliced->offset_ = off;
         return sliced;
     }
 

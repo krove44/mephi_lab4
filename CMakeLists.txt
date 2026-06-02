@@ -21,6 +21,7 @@ FetchContent_MakeAvailable(googletest)
 
 add_executable(tests
     tests/CardinalTests.cpp
+    tests/RecurentGeneratorTests.cpp
 )
 
 target_link_libraries(tests PRIVATE
