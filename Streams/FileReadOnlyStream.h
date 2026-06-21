@@ -1,10 +1,12 @@
 #pragma once
 #include <fstream>
 #include <string>
-#include "..//Optional.h"
+#include "../Optional.h"
+#include "../Exception/ReadOnlyStreamException.h"
+#include "IReadOnlyStream.h"
 
 template<typename T>
-class ReadOnlyStream {
+class ReadOnlyStream : public IReadOnlyStream<T>{
 private:
     std::ifstream file_;
 public:
