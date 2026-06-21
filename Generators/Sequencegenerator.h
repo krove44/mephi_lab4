@@ -13,7 +13,7 @@ private:
     size_t offset_ = 0;
 
 public:
-    explicit SequenceGenerator(const LazySequence<Container, T>& seq, size_t offset = 0): 
+    SequenceGenerator(const LazySequence<Container, T>& seq, size_t offset = 0): 
         seq_(seq), cursor_(offset), offset_(offset) {}
 
     bool HasNext() const override {

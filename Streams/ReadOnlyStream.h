@@ -1,7 +1,7 @@
 #pragma once
 #include <fstream>
 #include <string>
-#include <optional>
+#include "..//Optional.h"
 
 template<typename T>
 class ReadOnlyStream {
@@ -16,30 +16,17 @@ public:
     }
 
     ~ReadOnlyStream() {
-        if (file_.is_open()) file_.close();
-    }
-
-    bool is_end() {
-        int c = file_.peek();
-        while (c == ' ' || c == '\n' || c == '\r' || c == '\t') {
-            file_.get();
-            c = file_.peek();
+        if (file_.is_open()) {
+            file_.close();
         }
-        return file_.eof() || c == EOF;
     }
 
-    std::optional<T> try_read() {
-        if (is_end()) return std::nullopt;
-        return read();
-    }
-
-    T read() {
+    Optional<T> try_read() {
         T value;
-        file_ >> value;
-        if (file_.fail() && !file_.eof()) {
-            throw StreamError("Can't read");
+        if (file_ >> value) {
+            return Optional<T>(value);
         }
-        return value;
+        return Optional<T>();
     }
 
     void close() {
