@@ -1,0 +1,22 @@
+{
+    "cmake.generator": "Ninja",
+    "cmake.buildEnvironment": {
+    "PATH": "C:/msys64/clang64/bin;${env:PATH}"
+    },
+    "cmake.cmakePath": "C:/msys64/clang64/bin/cmake.exe",
+    "cmake.configureArgs": [
+        "-DCMAKE_C_COMPILER=C:/msys64/clang64/bin/clang.exe",
+        "-DCMAKE_CXX_COMPILER=C:/msys64/clang64/bin/clang++.exe"
+    ],
+    "terminal.integrated.defaultProfile.windows": "MSYS2 CLANG64",
+    "terminal.integrated.profiles.windows": {
+        "MSYS2 CLANG64": {
+            "path": "C:/msys64/usr/bin/bash.exe",
+            "args": ["--login", "-i"],
+            "env": {
+                "MSYSTEM": "CLANG64",
+                "CHERE_INVOKING": "1"
+            }
+        }
+    }
+}

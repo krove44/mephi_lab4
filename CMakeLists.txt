@@ -33,10 +33,15 @@ target_link_libraries(tests PRIVATE
 include(GoogleTest)
 gtest_discover_tests(tests)
 
-find_package(Curses REQUIRED)
-include_directories(${CURSES_INCLUDE_DIR})
-target_link_libraries(mephi_lab4 PRIVATE ${CURSES_LIBRARIES})
-
 add_executable(main
     main.cpp
+)
+target_include_directories(main PRIVATE
+    C:/msys64/clang64/include
+)
+target_link_directories(main PRIVATE
+    C:/msys64/clang64/lib
+)
+target_link_libraries(main PRIVATE
+    ncursesw
 )
