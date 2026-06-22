@@ -20,8 +20,7 @@ LazySequence<Container, int> MakeFibSeq() {
     Container<int> seed = {0, 1};
     auto gen = std::make_shared<RecurentGenerator<Container, int>>(
         FibRule<Container>(), seed);
-    return LazySequence<Container, int>(
-        std::static_pointer_cast<IGenerator<Container, int>>(gen));
+    return LazySequence<Container, int>(gen);
 }
 
 TEST(LazySequenceArray, DefaultConstructorIsEmpty) {
