@@ -1,5 +1,4 @@
 #include <string>
-#include "Streams/IReadOnlyStream.h"
 #include "Streams/FileReadOnlyStream.h"
 #include "OnlineStatistic.h"
 #include <ncursesw/curses.h>
@@ -14,6 +13,7 @@ int main() {
     start_color();
     init_pair(1, COLOR_WHITE, COLOR_BLACK);
     init_pair(2, COLOR_RED, COLOR_BLACK);
+    init_pair(3, COLOR_GREEN, COLOR_BLACK);
 
     wbkgd(stdscr, COLOR_PAIR(1));
 
@@ -46,7 +46,9 @@ int main() {
                 stats.add(opt_val.value());
                 move(6, 0);
                 clrtobot();
+                attron(COLOR_PAIR(3) | A_BOLD);
                 mvprintw(6, 2, "new number: %d", opt_val.value());
+                attroff(COLOR_PAIR(1) | A_BOLD);
                 mvprintw(8, 2, "count: %zu", stats.count());
                 mvprintw(9, 2, "sum: %d", stats.sum());
                 mvprintw(10, 2, "min: %d", stats.min());

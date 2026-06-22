@@ -2,10 +2,8 @@
 #include <memory>
 #include "../Cardinal.h"
 #include "../LazySequence.h"
-#include "../Generators/IGenerator.h"
 #include "../Generators/RecurentGenerator.h"
 #include "../mephi_lab2/Sequence/ArraySequence.h"
-#include "../mephi_lab2/Sequence/ListSequence.h"
 
 template <template <typename> class Container>
 auto FibRule() {
