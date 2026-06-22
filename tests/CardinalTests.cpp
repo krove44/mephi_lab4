@@ -118,7 +118,3 @@ TEST(Cardinal, GreaterOrEqualFinite) {
 TEST(Cardinal, ValueThrowsOnInfinite) {
     EXPECT_THROW(Cardinal::Omega().Value(), CardinalException);
 }
-
-TEST(Cardinal, FinitePartThrowsOnTransfinite) {
-    EXPECT_THROW(Cardinal::OmegaPlus(3).FinitePart(), CardinalException);
-}

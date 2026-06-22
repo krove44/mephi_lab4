@@ -42,8 +42,8 @@ public:
     }
 
     size_t FinitePart() const {
-        if (IsTransfinite()) {
-            throw CardinalException("FinitePart no transfinite");
+        if (IsInfinite()) {
+            throw CardinalException("FinitePart no IsInfinite");
         }
         return value_;
     }

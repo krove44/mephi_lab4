@@ -142,5 +142,5 @@ LazySequence<Container, T> LazySequence<Container, T>::Concat(const LazySequence
     auto gen_self  = std::make_shared<SequenceGenerator<Container, T>>(*this);
     auto gen_other = std::make_shared<SequenceGenerator<Container, T>>(other);
     auto gen_concat = std::make_shared<ConcatGenerator<Container, T>>(gen_self, gen_other);
-    return LazySequence<Container, T>(std::static_pointer_cast<IGenerator<Container, T>>(gen_concat));
+    return LazySequence<Container, T>(gen_concat);
 }

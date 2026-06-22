@@ -74,7 +74,7 @@ public:
             if (offset.IsTransfinite()) {
                 return second_->Slice(Cardinal(offset.FinitePart()));
             }
-            throw std::logic_error("index is infinite");
+            throw ConcatGeneratorException("index is infinite");
         }
         if (offset < first_size) {
             auto sliced_first = first_->Slice(offset);

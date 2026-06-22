@@ -158,6 +158,43 @@ TEST(LazySequenceArray, ConcatPreservesOrder) {
     EXPECT_EQ(c.Get(3), 4);
 }
 
+TEST(LazySequenceArray, ConcatInfiniteWithFinite) {
+    auto fib = MakeFibSeq<ArraySequence>();
+    LazySequence<ArraySequence, int> finite(ArraySequence<int>{100, 200, 300});
+    auto c = fib.Concat(finite);
+
+    EXPECT_TRUE(c.IsInfinite());
+    EXPECT_EQ(c.Get(0), 0);
+    EXPECT_EQ(c.Get(1), 1);
+    EXPECT_EQ(c.Get(6), 8);
+    EXPECT_EQ(c.Get(9), 34);
+
+    EXPECT_EQ(c.GetByCardinal(Cardinal::OmegaPlus(0)), 100);
+    EXPECT_EQ(c.GetByCardinal(Cardinal::OmegaPlus(1)), 200);
+    EXPECT_EQ(c.GetByCardinal(Cardinal::OmegaPlus(2)), 300);
+}
+
+TEST(LazySequenceArray, ConcatTwoInfiniteSequences) {
+    auto fib = MakeFibSeq<ArraySequence>();
+
+    ArraySequence<int> seed = {0};
+    auto rule = [](const ArraySequence<int>& c) -> int {
+        return c[c.GetLenght() - 1] + 10;
+    };
+    auto gen = std::make_shared<RecurentGenerator<ArraySequence, int>>(rule, seed);
+    LazySequence<ArraySequence, int> tens(gen);
+
+    auto c = fib.Concat(tens);
+
+    EXPECT_TRUE(c.IsInfinite());
+    EXPECT_EQ(c.Get(0), 0);
+    EXPECT_EQ(c.Get(6), 8);
+
+    EXPECT_EQ(c.GetByCardinal(Cardinal::OmegaPlus(0)), 0);
+    EXPECT_EQ(c.GetByCardinal(Cardinal::OmegaPlus(1)), 10);
+    EXPECT_EQ(c.GetByCardinal(Cardinal::OmegaPlus(3)), 30);
+}
+
 TEST(LazySequenceArray, InfiniteGeneratorMakesInfiniteSequence) {
     auto seq = MakeFibSeq<ArraySequence>();
     EXPECT_TRUE(seq.IsInfinite());
